@@ -1,29 +1,44 @@
-const Main = () => {
+import { useState } from "react";
+
+const Project = () => {
   return (
     <>
-      <div class="h-full flex flex-row justify-between space-x-3 overflow-x-auto">
-        <Item />
-        <Item />
-        <Item />
-        <Item />
-        <Item />
-        <Item />
-        <Item />
-        <Item />
-        <Item />
-        <Item />
+      <div className="flex-none w-64 h-full p-3">
+        <div className="bg-white rounded-xl p-4">项目</div>
+      </div>
+    </>
+  );
+};
+
+const CreateNewProject = ({ onClick }) => {
+  return (
+    <>
+      <div className="flex-none w-64 h-full p-3">
+        <button className="bg-white rounded-xl p-4" onClick={onClick}>
+          {" "}
+          新增项目
+        </button>
+      </div>
+    </>
+  );
+};
+
+
+
+const Main = () => {
+  const [projects, setProjects] = useState([<Project key={0} />]);
+  const addProject = () => {
+    setProjects([...projects, <Project key={projects.length} />]);
+  };
+
+  return (
+    <>
+      <div className="h-full flex flex-row  space-x-3 overflow-x-auto">
+        {projects}
+        <CreateNewProject onClick={addProject} />
       </div>
     </>
   );
 };
 export default Main;
 
-const Item = () => {
-  return (
-    <>
-      <div class="flex-none w-64 h-full p-3">
-        <div class="bg-white rounded-xl p-4">item</div>
-      </div>
-    </>
-  );
-};
