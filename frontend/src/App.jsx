@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Nav from "./components/Nav";
-import Main from "./components/Main";
+import Body from "./components/Body";
 import HeadNav from "./components/HeadNav";
 import "./App.css";
 import * as util_requests from "./request/util.request";
@@ -19,7 +19,7 @@ function App() {
           </div>
 
           <div className="w-3/4 bg-red-200 p-4 ">
-            <Main />
+            <Body />
           </div>
         </div>
       </div>
