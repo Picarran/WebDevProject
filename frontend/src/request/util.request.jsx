@@ -29,14 +29,9 @@ export async function logIn(username, password) {
 }
 
 export async function writeProject(projectName) {
-  try {
-    await client.post(base + "/project/write", {
-      projectName,
-    });
-  } catch (e) {
-    console.log(e);
-    alert("写入项目失败:项目名不能为空");
-  }
+  await client.post(base + "/project/write", {
+    projectName,
+  });
 }
 
 export async function fetchProjects(index = -1) {
@@ -60,5 +55,15 @@ export async function deleteProject(index) {
   } catch (e) {
     console.log(e);
     alert("删除项目失败");
+  }
+}
+
+export async function renameProject(index, newName) {
+  try {
+    console.log(index, newName);
+    await client.post(base + "/project/rename", { index, newName });
+  } catch (e) {
+    console.log(e);
+    alert("重命名项目失败");
   }
 }

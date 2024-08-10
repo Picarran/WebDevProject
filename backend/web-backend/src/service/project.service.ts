@@ -37,4 +37,14 @@ export class ProjectService {
       console.log(err);
     }
   }
+
+  async renameProject(projectIndex: number, newName: string) {
+    let projects = await this.readProject();
+    projects[projectIndex].projectName = newName;
+    try {
+      await fs.writeFile(datafilepath, JSON.stringify(projects));
+    } catch (err) {
+      console.log(err);
+    }
+  }
 }

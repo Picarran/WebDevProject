@@ -3,60 +3,6 @@ import React from "react";
 import * as util_requests from "../request/util.request";
 
 const Body = () => {
-  const [showModel, setShowModel] = useState(false);
-
-  const handleSubmit = async (projectName) => {
-    console.log("submit");
-
-    await util_requests.writeProject(projectName);
-    setShowModel(false);
-    let newProject = await util_requests.fetchProjects(projects.length);
-    console.log(newProject);
-
-    setProjects((prevProjects) => [
-      ...prevProjects,
-      <Project
-        key={projects.length}
-        index={projects.length}
-        name={newProject.projectName}
-      />,
-    ]);
-  };
-
-  const AddProjectModel = ({ show }) => {
-    const [projectName, setProjectName] = useState("");
-
-    if (!show) return null;
-    return (
-      <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center">
-        <div className="bg-white p-4 rounded-xl w-96 h-48 flex flex-col justify-between">
-          <div className="flex flex-row justify-between items-center">
-            <div>新建项目</div>
-            <button onClick={() => setShowModel(false)}>x</button>
-          </div>
-          <div className="mt-4">
-            <input
-              type="text"
-              placeholder="项目名称"
-              className="w-full p-2 rounded-xl"
-              onChange={(e) => {
-                setProjectName(e.target.value);
-              }}
-            />
-          </div>
-          <div className="mt-4">
-            <button
-              className="bg-blue-500 text-white p-2 rounded-xl w-full"
-              onClick={() => handleSubmit(projectName)}
-            >
-              确定
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
   const [projects, setProjects] = useState([]);
   const Project = ({ index, name }) => {
     return (
@@ -65,11 +11,10 @@ const Body = () => {
           <div className="bg-white rounded-xl p-4">
             <div className="flex flex-row justify-between items-center">
               <div>
-                项目{index}
-                {name}
+                项目{index}:{name}
               </div>
               <div className="items-right">
-                <button>
+                <button onClick={() => renameProject(index)}>
                   {/* todo */}
                   {/* <img src={renameImage} />    */}c
                 </button>
@@ -94,6 +39,103 @@ const Body = () => {
     );
   };
 
+  const [showModel, setShowModel] = useState(false);
+  const [modalTitle, setModalTitle] = useState("创建项目");
+  const [submitHandler, setSubmitHandler] = useState(() => () => {});
+  let renameProjectIndex = -1;
+
+  const Model = ({ show, title, submit }) => {
+    const [projectName, setProjectName] = useState("");
+
+    if (!show) return null;
+    return (
+      <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center">
+        <div className="bg-white p-4 rounded-xl w-96 h-48 flex flex-col justify-between">
+          <div className="flex flex-row justify-between items-center">
+            <div>{title}</div>
+            <button onClick={() => setShowModel(false)}>x</button>
+          </div>
+          <div className="mt-4">
+            <input
+              type="text"
+              placeholder="项目名称"
+              className="w-full p-2 rounded-xl"
+              onChange={(e) => {
+                setProjectName(e.target.value);
+              }}
+            />
+          </div>
+          <div className="mt-4">
+            <button
+              className="bg-blue-500 text-white p-2 rounded-xl w-full"
+              onClick={() => submit(projectName)}
+            >
+              确定
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const handleAddProject = async (projectName) => {
+    console.log("submit");
+    try {
+      await util_requests.writeProject(projectName);
+      setShowModel(false);
+      let newProject = await util_requests.fetchProjects(projects.length);
+      console.log(newProject);
+
+      setProjects((prevProjects) => [
+        ...prevProjects,
+        <Project
+          key={projects.length}
+          index={projects.length}
+          name={newProject.projectName}
+        />,
+      ]);
+    } catch (e) {
+      alert("写入项目失败:项目名不能为空");
+      console.log(e);
+    }
+  };
+
+  const handleRenameProject = async (newName) => {
+    await util_requests.renameProject(renameProjectIndex, newName);
+    setProjects((prevProjects) => {
+      const newProjects = prevProjects.map((project, i) => {
+        if (i === renameProjectIndex) {
+          return React.cloneElement(project, { name: newName });
+        }
+        return project;
+      });
+      return newProjects;
+    });
+  };
+
+  const addProject = () => {
+    setModalTitle("创建项目");
+    setSubmitHandler(() => handleAddProject);
+    setShowModel(true);
+  };
+
+  const renameProject = (index) => {
+    setModalTitle("重命名项目");
+    setSubmitHandler(() => handleRenameProject);
+    renameProjectIndex = index
+    setShowModel(true);
+  };
+
+  const removeProject = async (index) => {
+    setProjects((prevProjects) => {
+      const newProjects = prevProjects.filter((_, i) => i !== index);
+      return newProjects.map((project, i) =>
+        React.cloneElement(project, { key: i, index: i })
+      );
+    });
+    await util_requests.deleteProject(index);
+  };
+
   const loadAllProjects = async () => {
     let projects = await util_requests.fetchProjects();
     console.log(projects);
@@ -104,20 +146,6 @@ const Body = () => {
     );
   };
 
-  const addProject = () => {
-    setShowModel(true);
-  };
-
-  const removeProject = async(index) => {
-    setProjects((prevProjects) => {
-      const newProjects = prevProjects.filter((_, i) => i !== index);
-      return newProjects.map((project, i) =>
-        React.cloneElement(project, { key: i, index: i })
-      );
-    });
-    await util_requests.deleteProject(index);
-  };
-
   useEffect(() => {
     loadAllProjects();
   }, []);
@@ -126,7 +154,7 @@ const Body = () => {
       <div className="h-full flex flex-row  space-x-3 overflow-x-auto">
         {projects}
         <CreateNewProject />
-        <AddProjectModel show={showModel} />
+        <Model show={showModel} title={modalTitle} submit={submitHandler} />
       </div>
     </>
   );

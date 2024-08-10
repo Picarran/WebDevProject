@@ -18,7 +18,15 @@ export class ProjectController {
   }
 
   @Post('/delete')
-  public async deleteProject(@Body() projectIndexMessage) {
-    await this.projectService.deleteProject(projectIndexMessage.index);
+  public async deleteProject(@Body() projectMessage) {
+    await this.projectService.deleteProject(projectMessage.index);
+  }
+
+  @Post('/rename')
+  public async renameProject(@Body() projectMessage) {
+    await this.projectService.renameProject(
+      projectMessage.index,
+      projectMessage.newName
+    );
   }
 }
