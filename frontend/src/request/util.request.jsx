@@ -15,6 +15,7 @@ const base = "http://127.0.0.1:7001";
 //   }
 // }
 
+// login
 export async function logIn(username, password) {
   try {
     const result = await client.post(base + "/user/logIn", {
@@ -28,7 +29,8 @@ export async function logIn(username, password) {
   }
 }
 
-export async function writeProject(projectName,tasklist=[]) {
+// project
+export async function writeProject(projectName, tasklist = []) {
   await client.post(base + "/project/write", {
     projectName,
     tasklist,
@@ -66,5 +68,36 @@ export async function renameProject(index, newName) {
   } catch (e) {
     console.log(e);
     alert("重命名项目失败");
+  }
+}
+
+// task
+export async function addTask(task, projectId) {
+  try {
+    console.log(task, projectId);
+    await client.post(base + "/task/add", { task, projectId });
+  } catch (e) {
+    console.log(e);
+    alert("添加任务失败");
+  }
+}
+
+export async function deleteTask(projectId, taskId) {
+  try {
+    console.log(projectId, taskId);
+    await client.post(base + "/task/delete", { projectId, taskId });
+  } catch (e) {
+    console.log(e);
+    alert("删除任务失败");
+  }
+}
+
+export async function updateTask(task, projectId, taskId) {
+  try {
+    console.log(task, projectId, taskId);
+    await client.post(base + "/task/update", { task, projectId, taskId });
+  } catch (e) {
+    console.log(e);
+    alert("更新任务失败");
   }
 }

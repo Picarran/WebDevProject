@@ -4,18 +4,19 @@ import { Task } from './task.dto';
 export class Project {
   @Rule(RuleType.string().required())
   projectName: string;
+  
+  @Rule(RuleType.array().items(RuleType.object().instance(Task)))
+  tasklist: Task[] ;
 
-  taskList: Task[] = [];
+  //   @Rule(RuleType.number().required())
+  //   projectIndex: number;
 
-//   @Rule(RuleType.number().required())
-//   projectIndex: number;
+  //   @Rule(RuleType.string().required())
+  //   projectOwner: string;
 
-//   @Rule(RuleType.string().required())
-//   projectOwner: string;
+  //   @Rule(RuleType.string().required())
+  //   projectType: string;
 
-//   @Rule(RuleType.string().required())
-//   projectType: string;
-
-//   @Rule(RuleType.string().required())
-//   projectStatus: string;
+  //   @Rule(RuleType.string().required())
+  //   projectStatus: string;
 }

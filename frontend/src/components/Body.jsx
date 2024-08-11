@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import React from "react";
 import * as util_requests from "../request/util.request";
+import Tasks from "./Task";
 
 const Body = () => {
   const [projects, setProjects] = useState([]);
-  const Project = ({ index, name, tasklist }) => {
+  const Project = ({ index, name,tasklist }) => {
     return (
       <>
         <div className="flex-none w-64 h-full p-3">
@@ -20,6 +21,9 @@ const Body = () => {
                 </button>
                 <button onClick={() => removeProject(index)}>x</button>
               </div>
+            </div>
+            <div>
+              <Tasks projectId={index} tasklist={tasklist} />
             </div>
           </div>
         </div>
@@ -156,7 +160,7 @@ const Body = () => {
       projects.map((project, i) => ({
         id: i,
         name: project.projectName,
-        tasklist: project.taskList,
+        tasklist: project.tasklist,
       }))
     );
   };
