@@ -4,7 +4,7 @@ import * as util_requests from "../request/util.request";
 
 const Body = () => {
   const [projects, setProjects] = useState([]);
-  const Project = ({ index, name }) => {
+  const Project = ({ index, name, tasklist }) => {
     return (
       <>
         <div className="flex-none w-64 h-full p-3">
@@ -27,6 +27,21 @@ const Body = () => {
     );
   };
 
+  const Projects = () => {
+    return (
+      <>
+        {projects.map((project, index) => (
+          <Project
+            key={index}
+            index={index}
+            name={project.name}
+            tasklist={project.tasklist}
+          />
+        ))}
+      </>
+    );
+  };
+
   const CreateNewProject = () => {
     return (
       <>
@@ -42,7 +57,7 @@ const Body = () => {
   const [showModel, setShowModel] = useState(false);
   const [modalTitle, setModalTitle] = useState("创建项目");
   const [submitHandler, setSubmitHandler] = useState(() => () => {});
-  let renameProjectIndex = -1;
+  let renameProjectIndex = -1; // todo 其他办法？
 
   const Model = ({ show, title, submit }) => {
     const [projectName, setProjectName] = useState("");
@@ -88,11 +103,7 @@ const Body = () => {
 
       setProjects((prevProjects) => [
         ...prevProjects,
-        <Project
-          key={projects.length}
-          index={projects.length}
-          name={newProject.projectName}
-        />,
+        { id: projects.length, name: newProject.projectName, tasklist: [] },
       ]);
     } catch (e) {
       alert("写入项目失败:项目名不能为空");
@@ -105,7 +116,7 @@ const Body = () => {
     setProjects((prevProjects) => {
       const newProjects = prevProjects.map((project, i) => {
         if (i === renameProjectIndex) {
-          return React.cloneElement(project, { name: newName });
+          return { id: i, name: newName, tasklist: project.tasklist };
         }
         return project;
       });
@@ -122,16 +133,18 @@ const Body = () => {
   const renameProject = (index) => {
     setModalTitle("重命名项目");
     setSubmitHandler(() => handleRenameProject);
-    renameProjectIndex = index
+    renameProjectIndex = index;
     setShowModel(true);
   };
 
   const removeProject = async (index) => {
     setProjects((prevProjects) => {
       const newProjects = prevProjects.filter((_, i) => i !== index);
-      return newProjects.map((project, i) =>
-        React.cloneElement(project, { key: i, index: i })
-      );
+      return newProjects.map((project, i) => ({
+        id: i,
+        name: project.name,
+        tasklist: project.tasklist,
+      }));
     });
     await util_requests.deleteProject(index);
   };
@@ -140,9 +153,11 @@ const Body = () => {
     let projects = await util_requests.fetchProjects();
     console.log(projects);
     setProjects(
-      projects.map((project, i) => (
-        <Project key={i} index={i} name={project.projectName} />
-      ))
+      projects.map((project, i) => ({
+        id: i,
+        name: project.projectName,
+        tasklist: project.taskList,
+      }))
     );
   };
 
@@ -152,7 +167,7 @@ const Body = () => {
   return (
     <>
       <div className="h-full flex flex-row  space-x-3 overflow-x-auto">
-        {projects}
+        <Projects />
         <CreateNewProject />
         <Model show={showModel} title={modalTitle} submit={submitHandler} />
       </div>
