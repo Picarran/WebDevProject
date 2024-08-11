@@ -1,10 +1,6 @@
 import { Provide } from '@midwayjs/core';
 import * as fs from 'fs';
-class Task {
-  id: number;
-  title: string;
-  description: string;
-}
+import { Task } from '../dto/task.dto';
 
 @Provide()
 export class TaskService {
@@ -17,17 +13,6 @@ export class TaskService {
       }
     });
 
-    return [
-      {
-        id: 1,
-        title: 'Task 1',
-        description: 'Task 1 description',
-      },
-      {
-        id: 2,
-        title: 'Task 2',
-        description: 'Task 2 description',
-      },
-    ];
+    return [];
   }
 }

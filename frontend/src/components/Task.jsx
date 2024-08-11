@@ -1,14 +1,13 @@
 export class Task{
-    constructor(title,index,owner,beginTime,endTime){
+    constructor(id,title,owner,beginTime,endTime,description=""){
+        this.id = id;
         this.title = title;
-        this.index = index;
         this.owner = owner;
         this.beginTime = beginTime;
         this.endTime = endTime;
+        this.description = description;
     }
 }
-
-
 
 
 const TaskComponent = ({task})=>{

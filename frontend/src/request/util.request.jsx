@@ -28,9 +28,10 @@ export async function logIn(username, password) {
   }
 }
 
-export async function writeProject(projectName) {
+export async function writeProject(projectName,tasklist=[]) {
   await client.post(base + "/project/write", {
     projectName,
+    tasklist,
   });
 }
 
