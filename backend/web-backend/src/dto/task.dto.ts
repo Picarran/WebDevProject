@@ -6,4 +6,7 @@ export class Task {
   beginTime: string;
   endTime: string;
   description: string;
+  status: string;
+  comments: string[];
+  files: string[];
 }

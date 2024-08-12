@@ -8,7 +8,10 @@ export class Task {
     owner,
     beginTime,
     endTime,
-    description = ""
+    description = "",
+    status = "todo",
+    comments = [],
+    file = ""
   ) {
     this.projectId = projectId;
     this.id = id;
@@ -17,6 +20,9 @@ export class Task {
     this.beginTime = beginTime;
     this.endTime = endTime;
     this.description = description;
+    this.status = status;
+    this.comments = comments;
+    this.file = file;
   }
 }
 
@@ -33,6 +39,9 @@ const Tasks = ({ projectId, tasklist }) => {
     const [taskDescription, setTaskDescription] = useState("");
     const [startDateTime, setStartDateTime] = useState("");
     const [endDateTime, setEndDateTime] = useState("");
+
+    const [comments, setComments] = useState(task ? task.comments : []);
+    const [commentContent, setCommentContent] = useState("");
 
     if (!show) return null;
     if (ModalDisplay === "add")
@@ -134,7 +143,14 @@ const Tasks = ({ projectId, tasklist }) => {
                 <div>附件：{task.file ? task.file : "未添加"}</div>
               </div>
               <div className="mt-4">
-                <div>评论：{task.comment ? task.comment : "未添加"}</div>
+                <div>评论：</div>
+                <div className="flex flex-col">
+                  {comments.length === 0
+                    ? "未评论"
+                    : comments.map((comment, index) => {
+                        return <div key={index}>{comment}</div>; // todo:评论时间、人、id
+                      })}
+                </div>
               </div>
               <div className="mt-4">
                 <button
@@ -207,14 +223,53 @@ const Tasks = ({ projectId, tasklist }) => {
                 <button>上传附件</button>
               </div>
               <div className="mt-4">
-                <div>评论：{task.comment ? task.comment : "未添加"}</div>
-                {/* todo */}
-                <button>添加评论</button>
+                <div>评论：</div>
+                <div className="flex flex-col">
+                  {comments.map((comment, index) => {
+                    return <div key={index}>{comment}</div>; // todo:评论时间、人、id
+                  })}
+                </div>
+                <div className="mt-4">
+                  <input
+                    type="text"
+                    placeholder={"添加评论"}
+                    className="w-full p-2 rounded-xl"
+                    value={commentContent}
+                    onChange={(e) => {
+                      setCommentContent(e.target.value);
+                    }}
+                  />
+                  <button
+                    onClick={() => {
+                      if (!commentContent) return alert("添加评论不能为空");
+                      setComments([...comments, commentContent]);
+                      setCommentContent("");
+                    }}
+                  >
+                    添加
+                  </button>
+                </div>
               </div>
               <div className="mt-4">
                 <button
                   className="bg-blue-500 text-white p-2 rounded-xl w-full"
-                  onClick={() => submit(new Task(projectId, task.id, taskTitle, "", startDateTime, endDateTime, taskDescription), projectId)}
+                  onClick={() =>
+                    submit(
+                      new Task(
+                        projectId,
+                        task.id,
+                        taskTitle ? taskTitle : task.title,
+                        "",
+                        startDateTime,
+                        endDateTime,
+                        taskDescription,
+                        task.status,
+                        comments,
+                        task.file
+                      ),
+                      projectId
+                    )
+                  }
                 >
                   确定
                 </button>
@@ -282,7 +337,7 @@ const Tasks = ({ projectId, tasklist }) => {
 
   const deleteTask = (projectId, task) => {
     setModalTitle("删除任务");
-    setSubmitHandler(() => handDelete);
+    setSubmitHandler(() => handleDelete);
     setModelDisplay("delete");
     setSelectedTask(task);
     setShowModel(true);
@@ -290,7 +345,7 @@ const Tasks = ({ projectId, tasklist }) => {
 
   // submit handler
 
-  const handleAdd = async(task) => {
+  const handleAdd = async (task) => {
     console.log(task);
     if (!task.title) return alert("任务名不能为空");
     // if (!task.beginTime) return alert("开始时间不能为空");
@@ -300,6 +355,8 @@ const Tasks = ({ projectId, tasklist }) => {
       await util_requests.addTask(task, projectId);
       setTasklist((prevTasklist) => [...prevTasklist, task]);
       setShowModel(false);
+      await util_requests.updateProjectId();
+      await loadAllTask(task.projectId);
     } catch (e) {
       console.log(e);
       alert("添加任务失败");
@@ -311,7 +368,7 @@ const Tasks = ({ projectId, tasklist }) => {
     setShowModel(false);
   };
 
-  const handleEdit = async(task, projectId) => {
+  const handleEdit = async (task, projectId) => {
     if (!task.title) return alert("任务名不能为空");
     // if (!task.beginTime) return alert("开始时间不能为空");
     // if (!task.endTime) return alert("结束时间不能为空");
@@ -327,6 +384,7 @@ const Tasks = ({ projectId, tasklist }) => {
         });
       });
       await util_requests.updateProjectId();
+      await loadAllTask(task.projectId);
     } catch (e) {
       console.log(e);
       alert("更新任务失败");
@@ -335,7 +393,7 @@ const Tasks = ({ projectId, tasklist }) => {
     setShowModel(false);
   };
 
-  const handDelete = async (projectId, taskId) => {
+  const handleDelete = async (projectId, taskId) => {
     try {
       await util_requests.deleteTask(projectId, taskId);
       console.log(tasklist);
@@ -348,7 +406,19 @@ const Tasks = ({ projectId, tasklist }) => {
       alert("删除任务失败");
     }
     await util_requests.updateProjectId();
+    await loadAllTask(projectId);
     setShowModel(false);
+  };
+
+  const loadAllTask = async (projectId) => {
+    try {
+      let tasks = await util_requests.fetchTasks(projectId);
+      console.log(tasks);
+      setTasklist(tasks);
+    } catch (e) {
+      console.log(e);
+      alert("读取任务失败");
+    }
   };
 
   // component

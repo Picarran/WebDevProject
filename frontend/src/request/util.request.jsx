@@ -102,11 +102,22 @@ export async function updateTask(task, projectId, taskId) {
   }
 }
 
-export async function updateProjectId(){
+export async function updateProjectId() {
   try {
     await client.post(base + "/task/updateProjectId");
   } catch (e) {
     console.log(e);
     alert("更新任务失败");
+  }
+}
+
+export async function fetchTasks(projectId) {
+  try {
+    console.log(projectId);
+    const project = await fetchProjects(projectId);
+    return project.tasklist;
+  } catch (e) {
+    console.log(e);
+    alert("读取任务失败");
   }
 }
