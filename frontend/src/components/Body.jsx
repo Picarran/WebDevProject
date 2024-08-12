@@ -168,7 +168,6 @@ const Body = () => {
   };
 
   useEffect(() => {
-    util_requests.updateProjectId();
     loadAllProjects();
   }, []);
   return (

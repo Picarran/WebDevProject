@@ -14,9 +14,13 @@ export class TaskService {
 
   async deleteTask(projectId: number, taskId: number) {
     let projects = await this.projectService.readProject();
+    console.log('man');
+    console.log(projects[projectId].tasklist);
     projects[projectId].tasklist = projects[projectId].tasklist.filter(
       (_, i) => i !== taskId
     );
+    console.log(projects);
+    console.log(projects[projectId].tasklist);
     this.projectService.rewriteProject(projects);
   }
 
@@ -29,8 +33,9 @@ export class TaskService {
   async updateProjectId() {
     let projects = await this.projectService.readProject();
     projects.forEach((project, index) => {
-      project.tasklist.forEach(task => {
+      project.tasklist.forEach((task,i) => {
         task.projectId = index;
+        task.id = i;
       });
     });
     this.projectService.rewriteProject(projects);

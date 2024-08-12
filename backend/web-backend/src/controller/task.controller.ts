@@ -29,7 +29,7 @@ export class TaskController {
   }
 
   @Post('/updateProjectId')
-    async updateProjectId() {
-        await this.taskService.updateProjectId();
-    }
+  async updateProjectId() {
+    await this.taskService.updateProjectId();
+  }
 }
