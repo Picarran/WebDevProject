@@ -174,9 +174,9 @@ const Tasks = ({ projectId, tasklist }) => {
                   type="text"
                   placeholder={task.description ? task.description : "未填写"}
                   className="w-full p-2 rounded-xl"
-                  //   onChange={(e) => {
-                  //     setTaskTitle(e.target.value);
-                  //   }}      // todo
+                  onChange={(e) => {
+                    setTaskDescription(e.target.value);
+                  }}
                 />
               </div>
               <div className="mt-4">
@@ -214,7 +214,7 @@ const Tasks = ({ projectId, tasklist }) => {
               <div className="mt-4">
                 <button
                   className="bg-blue-500 text-white p-2 rounded-xl w-full"
-                  onClick={submit}
+                  onClick={() => submit(new Task(projectId, task.id, taskTitle, "", startDateTime, endDateTime, taskDescription), projectId)}
                 >
                   确定
                 </button>
@@ -274,7 +274,7 @@ const Tasks = ({ projectId, tasklist }) => {
 
   const editTask = (task) => {
     setModalTitle("修改任务");
-    setSubmitHandler(() => handleEdit); // todo
+    setSubmitHandler(() => handleEdit);
     setSelectedTask(task);
     setModelDisplay("edit");
     setShowModel(true);
@@ -290,14 +290,14 @@ const Tasks = ({ projectId, tasklist }) => {
 
   // submit handler
 
-  const handleAdd = (task) => {
+  const handleAdd = async(task) => {
     console.log(task);
     if (!task.title) return alert("任务名不能为空");
     // if (!task.beginTime) return alert("开始时间不能为空");
     // if (!task.endTime) return alert("结束时间不能为空");
 
     try {
-      util_requests.addTask(task, projectId);
+      await util_requests.addTask(task, projectId);
       setTasklist((prevTasklist) => [...prevTasklist, task]);
       setShowModel(false);
     } catch (e) {
@@ -311,8 +311,27 @@ const Tasks = ({ projectId, tasklist }) => {
     setShowModel(false);
   };
 
-  const handleEdit = () => {
+  const handleEdit = async(task, projectId) => {
+    if (!task.title) return alert("任务名不能为空");
+    // if (!task.beginTime) return alert("开始时间不能为空");
+    // if (!task.endTime) return alert("结束时间不能为空");
     console.log("edit");
+    try {
+      await util_requests.updateTask(task, projectId, task.id);
+      setTasklist((prevTasklist) => {
+        return prevTasklist.map((t) => {
+          if (t.id === task.id) {
+            return task;
+          }
+          return t;
+        });
+      });
+      await util_requests.updateProjectId();
+    } catch (e) {
+      console.log(e);
+      alert("更新任务失败");
+    }
+
     setShowModel(false);
   };
 
