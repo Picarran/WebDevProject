@@ -2,7 +2,14 @@ import { createApp, close, createHttpRequest } from '@midwayjs/mock';
 import { Framework } from '@midwayjs/koa';
 
 describe('ProjectController', async () => {
-  const app = await createApp<Framework>();
+  let app;
+  beforeAll(async () => {
+    app = await createApp<Framework>();
+  });
+
+  afterAll(async () => {
+    await close(app);
+  });   
 
   it('should write a project', async () => {
     const project = {};
@@ -37,6 +44,4 @@ describe('ProjectController', async () => {
 
     expect(response.status).toBe(200);
   });
-
-  await close(app);
 });
