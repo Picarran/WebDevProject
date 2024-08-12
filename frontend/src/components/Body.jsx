@@ -5,7 +5,7 @@ import Tasks from "./Task";
 
 const Body = () => {
   const [projects, setProjects] = useState([]);
-  const Project = ({ index, name,tasklist }) => {
+  const Project = ({ index, name, tasklist }) => {
     return (
       <>
         <div className="flex-none w-64 h-full p-3">
@@ -151,6 +151,8 @@ const Body = () => {
       }));
     });
     await util_requests.deleteProject(index);
+    await util_requests.updateProjectId();
+    await loadAllProjects();
   };
 
   const loadAllProjects = async () => {
@@ -166,6 +168,7 @@ const Body = () => {
   };
 
   useEffect(() => {
+    util_requests.updateProjectId();
     loadAllProjects();
   }, []);
   return (

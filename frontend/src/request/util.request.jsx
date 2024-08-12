@@ -101,3 +101,12 @@ export async function updateTask(task, projectId, taskId) {
     alert("更新任务失败");
   }
 }
+
+export async function updateProjectId(){
+  try {
+    await client.post(base + "/task/updateProjectId");
+  } catch (e) {
+    console.log(e);
+    alert("更新任务失败");
+  }
+}

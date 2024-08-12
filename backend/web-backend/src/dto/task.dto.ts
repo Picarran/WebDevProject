@@ -1,5 +1,5 @@
 export class Task {
-  ProjectId: number;
+  projectId: number;
   id: number;
   title: string;
   owner: string;

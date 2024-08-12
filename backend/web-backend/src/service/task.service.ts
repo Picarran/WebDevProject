@@ -25,4 +25,14 @@ export class TaskService {
     projects[projectId].tasklist[taskId] = task;
     this.projectService.rewriteProject(projects);
   }
+
+  async updateProjectId() {
+    let projects = await this.projectService.readProject();
+    projects.forEach((project, index) => {
+      project.tasklist.forEach(task => {
+        task.projectId = index;
+      });
+    });
+    this.projectService.rewriteProject(projects);
+  }
 }

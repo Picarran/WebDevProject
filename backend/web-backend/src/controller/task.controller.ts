@@ -27,4 +27,9 @@ export class TaskController {
     const taskId = updateTaskMessage.taskId;
     await this.taskService.updateTask(task, projectId, taskId);
   }
+
+  @Post('/updateProjectId')
+    async updateProjectId() {
+        await this.taskService.updateProjectId();
+    }
 }
