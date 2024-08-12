@@ -12,7 +12,7 @@ describe('test/controller/home.test.ts', () => {
 
     // use expect by jest
     expect(result.status).toBe(200);
-    expect(result.text).toBe('启动');
+    expect(result.text).toBe('启动!');
 
     // close app
     await close(app);
