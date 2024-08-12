@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Nav from "./components/Nav";
+import LeftNav from "./components/LeftNav";
 import Body from "./components/Body";
 import HeadNav from "./components/HeadNav";
 import "./App.css";
@@ -15,7 +15,7 @@ function App() {
         <HeadNav />
         <div className="w-full flex-1 flex flex-row justify-between">
           <div className="w-1/4 bg-red-100 p-3 ">
-            <Nav />
+            <LeftNav />
           </div>
 
           <div className="w-3/4 bg-red-200 p-4 ">
