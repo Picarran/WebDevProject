@@ -1,4 +1,3 @@
-import request from 'supertest';
 import { createApp, close, createHttpRequest } from '@midwayjs/mock';
 import { Framework } from '@midwayjs/koa';
 
