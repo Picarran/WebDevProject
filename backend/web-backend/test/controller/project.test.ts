@@ -1,7 +1,7 @@
 import { createApp, close, createHttpRequest } from '@midwayjs/mock';
 import { Framework } from '@midwayjs/koa';
 
-describe('ProjectController', async () => {
+describe('ProjectController', () => {
   let app;
   beforeAll(async () => {
     app = await createApp<Framework>();
