@@ -80,8 +80,9 @@ const Visual = () => {
 
   return (
     <>
-      <div className="flex w-full items-center justify-center">
+      <div className="flex flex-col w-full items-center justify-center">
         <h1>看板视图</h1>
+        <div>已设置开始或结束日期的任务会在日历中显示</div>
       </div>
       <div className="flex flex-col items-center p-10 h-screen">
         <div className="flex flex-row w-full h-auto items-center justify-around">

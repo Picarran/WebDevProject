@@ -151,12 +151,11 @@ const Tasks = ({ projectId, tasklist }) => {
           <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-50 flex justify-center items-center">
             <div className="bg-white p-4  w-3/4 flex flex-col justify-between max-h-[75%] overflow-y-auto">
               <div className="flex flex-row justify-between items-center">
-                <div>{title}</div>
+                <div className="text-2xl">{title}</div>
                 <button onClick={() => setShowModel(false)}>x</button>
               </div>
               <div className="mt-4">
                 <div>任务名称：{task.title}</div>
-                <button>c</button>
               </div>
               <div className="mt-4">
                 <div>
@@ -212,7 +211,7 @@ const Tasks = ({ projectId, tasklist }) => {
           <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-50 flex justify-center items-center">
             <div className="bg-white p-4  w-3/4 flex flex-col justify-between max-h-[75%] overflow-y-auto">
               <div className="flex flex-row justify-between items-center">
-                <h1>{title}</h1>
+                <div className="text-2xl">{title}</div>
                 <button onClick={() => setShowModel(false)}>x</button>
               </div>
               <div className="mt-4">
@@ -261,53 +260,65 @@ const Tasks = ({ projectId, tasklist }) => {
               </div>
               <div className="mt-4">
                 <div>附件：</div>
-                <div className="flex flex-col">
-                  {files.map((filename, index) => {
-                    return (
-                      <div className="flex flex-row" key={index}>
-                        <div>{filename}</div>
-                        <button onClick={() => deleteFile(filename)}>x</button>
-                        <button onClick={() => getAndDownloadFile(filename)}>
-                          d
-                        </button>
-                      </div>
-                    );
-                  })}
+                <div className="flex flex-col space-y-2">
+                  <div>
+                    <div className="flex flex-col">
+                      {files.map((filename, index) => {
+                        return (
+                          <div className="flex flex-row" key={index}>
+                            <div>{filename}</div>
+                            <button onClick={() => deleteFile(filename)}>
+                              删除
+                            </button>
+                            <button
+                              onClick={() => getAndDownloadFile(filename)}
+                            >
+                              下载
+                            </button>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                  <input
+                    className="p-2"
+                    type="file"
+                    onChange={(e) => {
+                      setSelectedFile(e.target.files[0]);
+                    }}
+                  ></input>
                 </div>
-                <input
-                  type="file"
-                  onChange={(e) => {
-                    setSelectedFile(e.target.files[0]);
-                  }}
-                ></input>
                 <button onClick={handleFileUpload}>上传附件</button>
               </div>
               <div className="mt-4">
                 <div>评论：</div>
                 <div className="flex flex-col">
                   {comments.map((comment, index) => {
-                    return <div key={index}>{comment}</div>; // todo:评论时间、人、id
+                    return <div key={index}>{comment}</div>;
                   })}
                 </div>
                 <div className="mt-4">
-                  <input
-                    type="text"
-                    placeholder={"添加评论"}
-                    className="w-full p-2 rounded-xl"
-                    value={commentContent}
-                    onChange={(e) => {
-                      setCommentContent(e.target.value);
-                    }}
-                  />
-                  <button
-                    onClick={() => {
-                      if (!commentContent) return alert("添加评论不能为空");
-                      setComments([...comments, commentContent]);
-                      setCommentContent("");
-                    }}
-                  >
-                    添加
-                  </button>
+                  <div className="flex flex-col space-y-2">
+                    <input
+                      type="text"
+                      placeholder={"添加评论"}
+                      className="w-full p-2 rounded-xl"
+                      value={commentContent}
+                      onChange={(e) => {
+                        setCommentContent(e.target.value);
+                      }}
+                    />
+                    <button
+                      className="p-2 w-20"
+                      onClick={() => {
+                        if (!commentContent) return alert("添加评论不能为空");
+                        setComments([...comments, commentContent]);
+                        setCommentContent("");
+                      }}
+                    >
+                      添加
+                    </button>
+                  </div>
                 </div>
               </div>
               <div className="mt-4">
@@ -341,24 +352,24 @@ const Tasks = ({ projectId, tasklist }) => {
     if (ModalDisplay === "delete")
       return (
         <>
-          <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-50 flex justify-center items-center">
-            <div className="bg-white p-4  w-3/4 flex flex-col justify-between max-h-[75%] overflow-y-auto">
+          <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center">
+            <div className="bg-white p-4 rounded-xl w-96 h-48 flex flex-col justify-between">
               <div className="flex flex-row justify-between items-center">
-                <h1>{title}</h1>
+                <div className="text-2xl">{title}</div>
                 <button onClick={() => setShowModel(false)}>x</button>
               </div>
               <div className="mt-4">
                 <div>任务名称：{task.title}</div>
               </div>
-              <div className="mt-4 flex flex-row">
+              <div className="mt-4 flex flex-row space-x-4">
                 <button
-                  className="bg-blue-500 text-white p-2 rounded-xl w-full"
+                  className="bg-red-500 text-white p-2 rounded-xl w-full"
                   onClick={() => submit(projectId, task.id)}
                 >
                   确定
                 </button>
                 <button
-                  className="bg-red-500 text-white p-2 rounded-xl w-full"
+                  className="bg-blue-500 text-white p-2 rounded-xl w-full"
                   onClick={() => setShowModel(false)}
                 >
                   取消
@@ -486,11 +497,20 @@ const Tasks = ({ projectId, tasklist }) => {
     return (
       <>
         <div className="flex flex-row justify-between items-center">
-          <h3>{task.title}</h3>
-          <button onClick={() => deleteTask(projectId, task)}>x</button>
-          <button onClick={() => editTask(task)}>c</button>
-          <button onClick={() => showTaskDetail(task)}>d</button>
+          <div className="text-xl overflow-x-auto">{task.title}</div>
+          <div className="flex flex-row">
+            <button className="p-1" onClick={() => deleteTask(projectId, task)}>
+              删除
+            </button>
+            <button className="p-1" onClick={() => editTask(task)}>
+              修改
+            </button>
+            <button className="p-1" onClick={() => showTaskDetail(task)}>
+              查看
+            </button>
+          </div>
         </div>
+        <hr className="my-3 border-t-1 border-gray-200" />
       </>
     );
   };

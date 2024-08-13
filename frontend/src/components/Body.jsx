@@ -11,17 +11,28 @@ const Body = () => {
         <div className="flex-none w-64 h-full p-3">
           <div className="bg-white rounded-xl p-4">
             <div className="flex flex-row justify-between items-center">
-              <div>
-                项目{index+1}:{name}
+              <div className="text-2xl overflow-x-auto">
+                <div>项目{index + 1}:</div>
+                <div>{name}</div>
               </div>
               <div className="items-right">
-                <button onClick={() => renameProject(index)}>
-                  {/* todo */}
-                  {/* <img src={renameImage} />    */}c
-                </button>
-                <button onClick={() => removeProject(index)}>x</button>
+                <div className="flex flex-col space-y-1">
+                  <button
+                    className="bg-red-100 p-2"
+                    onClick={() => renameProject(index)}
+                  >
+                    <div>修改</div>
+                  </button>
+                  <button
+                    className="bg-red-100 p-2"
+                    onClick={() => removeProject(index)}
+                  >
+                    删除
+                  </button>
+                </div>
               </div>
             </div>
+            <hr className="my-3 border-t-2 border-gray-300" />
             <div>
               <Tasks projectId={index} tasklist={tasklist} />
             </div>
@@ -61,7 +72,7 @@ const Body = () => {
   const [showModel, setShowModel] = useState(false);
   const [modalTitle, setModalTitle] = useState("创建项目");
   const [submitHandler, setSubmitHandler] = useState(() => () => {});
-  let renameProjectIndex = -1; 
+  let renameProjectIndex = -1;
 
   const Model = ({ show, title, submit }) => {
     const [projectName, setProjectName] = useState("");
@@ -128,7 +139,7 @@ const Body = () => {
     });
   };
 
-  const addProject = async() => {
+  const addProject = async () => {
     await loadAllProjects();
     setModalTitle("创建项目");
     setSubmitHandler(() => handleAddProject);
