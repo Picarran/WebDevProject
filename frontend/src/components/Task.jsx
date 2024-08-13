@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import * as util_requests from "../request/util.request";
 export class Task {
   constructor(
@@ -11,7 +11,7 @@ export class Task {
     description = "",
     status = "todo",
     comments = [],
-    file = ""
+    files = []
   ) {
     this.projectId = projectId;
     this.id = id;
@@ -22,7 +22,7 @@ export class Task {
     this.description = description;
     this.status = status;
     this.comments = comments;
-    this.file = file;
+    this.files = files;
   }
 }
 
@@ -42,6 +42,36 @@ const Tasks = ({ projectId, tasklist }) => {
 
     const [comments, setComments] = useState(task ? task.comments : []);
     const [commentContent, setCommentContent] = useState("");
+    const [files, setFiles] = useState(task ? task.files : []);
+    const [selectedFile, setSelectedFile] = useState(null);
+
+    const handleFileUpload = async () => {
+      if (!selectedFile) return alert("请选择一个文件");
+      if (files.includes(selectedFile.name))
+        return alert("文件已存在，请勿重复上传");
+      let success = true;
+      try {
+        await util_requests.uploadFile(selectedFile, projectId, task.id);
+        console.log(selectedFile);
+      } catch (e) {
+        success = false;
+        console.log(e);
+        alert("上传文件失败，不支持的文件类型");
+      }
+      console.log(success);
+      if (success) setFiles((prevFiles) => [...prevFiles, selectedFile.name]);
+    };
+
+    const getAndDownloadFile = async (filename) => {
+      console.log(filename);
+      await util_requests.getAndDownloadFile(filename);
+    };
+
+    const deleteFile = (filename) => {
+      setFiles((prevFiles) => {
+        return prevFiles.filter((file) => file !== filename);
+      });
+    };
 
     if (!show) return null;
     if (ModalDisplay === "add")
@@ -140,7 +170,19 @@ const Tasks = ({ projectId, tasklist }) => {
                 <div>结束时间：{task.endTime}</div>
               </div>
               <div className="mt-4">
-                <div>附件：{task.file ? task.file : "未添加"}</div>
+                <div>附件：</div>
+                <div className="flex flex-col">
+                  {files.map((filename, index) => {
+                    return (
+                      <div className="flex flex-row" key={index}>
+                        <div>{filename}</div>
+                        <button onClick={() => getAndDownloadFile(filename)}>
+                          下载
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
               <div className="mt-4">
                 <div>评论：</div>
@@ -218,9 +260,27 @@ const Tasks = ({ projectId, tasklist }) => {
                 ></input>
               </div>
               <div className="mt-4">
-                <div>附件：{task.file ? task.file : "未添加"}</div>
-                {/* todo */}
-                <button>上传附件</button>
+                <div>附件：</div>
+                <div className="flex flex-col">
+                  {files.map((filename, index) => {
+                    return (
+                      <div className="flex flex-row" key={index}>
+                        <div>{filename}</div>
+                        <button onClick={() => deleteFile(filename)}>x</button>
+                        <button onClick={() => getAndDownloadFile(filename)}>
+                          d
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+                <input
+                  type="file"
+                  onChange={(e) => {
+                    setSelectedFile(e.target.files[0]);
+                  }}
+                ></input>
+                <button onClick={handleFileUpload}>上传附件</button>
               </div>
               <div className="mt-4">
                 <div>评论：</div>
@@ -265,7 +325,7 @@ const Tasks = ({ projectId, tasklist }) => {
                         taskDescription,
                         task.status,
                         comments,
-                        task.file
+                        files
                       ),
                       projectId
                     )

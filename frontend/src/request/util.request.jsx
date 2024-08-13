@@ -121,3 +121,59 @@ export async function fetchTasks(projectId) {
     alert("读取任务失败");
   }
 }
+
+// file
+export async function uploadFile(file, projectId, taskId) {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("projectId", projectId);
+  formData.append("taskId", taskId);
+  console.log(file, projectId, taskId);
+  await client.post(base + "/file/upload", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+}
+
+export async function getAndDownloadFile(filename) {
+  try {
+    console.log(filename);
+    const res = await client.post(
+      base + "/file/download",
+      { filename },
+      {
+        responseType: "json",
+      }
+    );
+    console.log(res);
+
+    const fileUrl = res.data;
+    console.log("文件URL:", fileUrl);
+
+
+    const result = await client.post(
+      base + "/file/download",
+      { fileUrl },
+      {
+        responseType: "blob",
+      }
+    );
+    console.log(result);
+
+    const blob = new Blob([result.data], {
+      type: result.headers["content-type"],
+    });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+  } catch (e) {
+    console.log(e);
+    alert("下载文件失败");
+  }
+}
