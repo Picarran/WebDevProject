@@ -12,7 +12,7 @@ const Body = () => {
           <div className="bg-white rounded-xl p-4">
             <div className="flex flex-row justify-between items-center">
               <div>
-                项目{index}:{name}
+                项目{index+1}:{name}
               </div>
               <div className="items-right">
                 <button onClick={() => renameProject(index)}>
@@ -61,7 +61,7 @@ const Body = () => {
   const [showModel, setShowModel] = useState(false);
   const [modalTitle, setModalTitle] = useState("创建项目");
   const [submitHandler, setSubmitHandler] = useState(() => () => {});
-  let renameProjectIndex = -1; // todo 其他办法？
+  let renameProjectIndex = -1; 
 
   const Model = ({ show, title, submit }) => {
     const [projectName, setProjectName] = useState("");
@@ -128,7 +128,8 @@ const Body = () => {
     });
   };
 
-  const addProject = () => {
+  const addProject = async() => {
+    await loadAllProjects();
     setModalTitle("创建项目");
     setSubmitHandler(() => handleAddProject);
     setShowModel(true);
