@@ -11,9 +11,7 @@ function App() {
       <div className="flex flex-col h-screen w-screen bg-red-100">
         <div className="flex flex-row justify-between">
           <button className="bg-red-100" onClick={() => setleftNav(0)}>
-            <div className="text-2xl p-1 bg-red-150">
-              {localStorage.getItem("user")}的任务敏捷看板
-            </div>
+            <div className="text-2xl p-1 bg-red-150">敏捷看板</div>
           </button>
           <button
             className="bg-red-100"
